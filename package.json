@@ -1,0 +1,24 @@
+{
+  "name": "samsungtv-rc-app",
+  "version": "1.0.0",
+  "description": "A remote control app for Samsung TVs",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "samsung",
+    "tv",
+    "remote",
+    "control"
+  ],
+  "author": "Paul Kapteijn",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^33.2.0"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}
