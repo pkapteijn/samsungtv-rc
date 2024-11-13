@@ -5,7 +5,7 @@ const status = {
 
 // We have fixed grid of 5 columns for buttons, NULL will leave the cell empty
 const KEYS1 = [
-    ["KEY_HOME", "NULL", "KEY_MENU", "POWER_ONOFF", "STATUS_CONNECTION"], 
+    ["KEY_HOME", "NULL", "KEY_MENU", "KEY_POWER", "STATUS_CONNECTION"], 
     ["NULL", "NULL", "NULL", "NULL", "NULL"], 
     ["NULL", "KEY_UP", "NULL", "NULL", "KEY_VOLUP"], 
     ["KEY_LEFT", "KEY_ENTER", "KEY_RIGHT", "NULL", "KEY_MUTE"], 
@@ -18,7 +18,7 @@ const KEYS2 = [
     ["KEY_4", "KEY_5", "KEY_6", "NULL", "KEY_INFO"], 
     ["KEY_7", "KEY_8", "KEY_9", "NULL", "KEY_CHDOWN"], 
     ["NULL", "KEY_0", "NULL", "NULL", "KEY_GUIDE"], 
-    ["KEY_GREEN", "KEY_RED", "KEY_YELLOW", "KEY_BLUE", "KEY_GUIDE"], 
+    ["KEY_GREEN", "KEY_RED", "KEY_YELLOW", "KEY_BLUE", "KEY_PLAY_BACK"], 
 ]
 
 const colorMapClass  = {
@@ -27,7 +27,7 @@ const colorMapClass  = {
     'YELLOW': "btn btn-warning", 
     'BLUE': "btn btn-info", 
     'DEFAULT': "btn btn-primary", 
-    'ONOFF': "btn btn-danger", 
+    'POWER': "btn btn-danger", 
     'CONNECTION': "badge rounded-pill bg-danger badge-pill-close"
 }
 
@@ -101,11 +101,16 @@ function getButtonClass(prefix, label) {
     let btnClass = colorMapClass['DEFAULT']
     switch(prefix) {
         case 'KEY':
-            if (label in ['GREEN', 'RED', 'YELLOW', 'BLUE']) {
+            if (['GREEN', 'RED', 'YELLOW', 'BLUE'].includes(label)) {
                 btnClass = colorMapClass[label]
             }
             else {
-                btnClass = colorMapClass['DEFAULT']
+                if (label == 'POWER') {
+                btnClass = colorMapClass[label]
+                }
+                else {
+                    btnClass = colorMapClass['DEFAULT']
+                }
             }
             break
         case 'POWER': 

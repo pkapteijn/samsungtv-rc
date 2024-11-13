@@ -95,6 +95,8 @@ Just to recap the Samsung interface:
 
 If your TV is in standby, there is no websocket connection to convey a power on command. For this, Samsung uses the Wake-On-Lan feature with the MAC address of the TV set. You can find this address from the aforementioned device information API. 
 
+> **Errata Corrige**: Apparently the newer models keep the websocket connection open. This allows to simply send the `KEY_POWER` key. 
+
 # What goes wrong? 
 [Index](#index)
  
