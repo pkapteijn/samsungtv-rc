@@ -53,7 +53,8 @@ class WsWrapper {
         clearTimeout(this.pingtimeout);
         this.connected = true
         this.win.webContents.send('send-m2r-connstat', this.connected)
-        // this.win.webContents.send('send-m2r-name', this.name)
+        this.win.webContents.send('send-m2r-name', this.name)
+        this.win.webContents.send('send-m2r-host', this.host)
       
         this.pingtimeout = setTimeout(() => {
           this.ws.terminate();

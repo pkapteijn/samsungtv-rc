@@ -123,7 +123,6 @@ function getButtonClass(prefix, label) {
             btnClass = colorMapClass['DEFAULT']
             break
     }
-    console.log("prefix, label, class: ", prefix, label, btnClass)
     return btnClass
 }
 
@@ -188,6 +187,11 @@ function setTitle(name) {
     title.innerText = name
 }
 
+function setHost(host) {
+    const hostname = document.getElementById("hostname")
+    hostname.innerText = host
+}
+
 function setConnectionStatus(connected) {
     const connstat = document.getElementById("status_connection")
     if (connected) {
@@ -208,6 +212,11 @@ function main() {
     window.electron.onUpdateName((name) => {
         console.log("Received name from main: " + name)
         setTitle(name)
+    })
+
+    window.electron.onUpdateHost((host) => {
+        console.log("Received hostname from main: " + host)
+        setHost(host)
     })
 
     window.electron.onUpdateConnStatus((status) => {

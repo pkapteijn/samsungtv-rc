@@ -1,8 +1,9 @@
 const upnp = require('node-upnp-utils');
 
 class SSDPDiscover {
-    constructor(win) {
-        this.win = win 
+    constructor(win, wsw) {
+        this.win = win
+        this.wsw = wsw
         this.host = "Samsung.lan"
         this.name = "My Samsung TV"   
     }
@@ -28,13 +29,15 @@ class SSDPDiscover {
             console.log(' * ' + name);
         }
         console.log(' * ' + device['headers']['USN']);
-        console.log('New device: ', device)
         if ((name.toLowerCase().includes('samsung')) &&
             (name.toLowerCase().includes('tv'))) {
                 console.log('Samsung TV found!')
                 this.host = device['address']
                 this.name = name
+                this.wsw.name = this.name
+                this.wsw.host = this.host
                 this.win.webContents.send('send-m2r-name', this.name)
+                this.win.webContents.send('send-m2r-host', this.host)
         }
 
     }
