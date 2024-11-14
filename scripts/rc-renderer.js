@@ -10,7 +10,7 @@ const KEYS1 = [
     ["NULL", "KEY_UP", "NULL", "NULL", "KEY_VOLUP"], 
     ["KEY_LEFT", "KEY_ENTER", "KEY_RIGHT", "NULL", "KEY_MUTE"], 
     ["NULL", "KEY_DOWN", "NULL", "NULL", "KEY_VOLDOWN"], 
-    ["KEY_RETURN", "NULL", "NULL", "NULL", "NULL"], 
+    ["KEY_RETURN", "NULL", "KEY_PLAY_BACK", "NULL", "NULL"], 
 ]
 
 const KEYS2 = [
@@ -18,7 +18,7 @@ const KEYS2 = [
     ["KEY_4", "KEY_5", "KEY_6", "NULL", "KEY_INFO"], 
     ["KEY_7", "KEY_8", "KEY_9", "NULL", "KEY_CHDOWN"], 
     ["NULL", "KEY_0", "NULL", "NULL", "KEY_GUIDE"], 
-    ["KEY_GREEN", "KEY_RED", "KEY_YELLOW", "KEY_BLUE", "KEY_PLAY_BACK"], 
+    ["KEY_GREEN", "KEY_RED", "KEY_YELLOW", "KEY_BLUE", "NULL"], 
 ]
 
 const colorMapClass  = {
