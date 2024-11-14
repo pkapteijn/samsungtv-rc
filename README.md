@@ -125,10 +125,23 @@ After some searching I found the NodeJS websocket library 'ws' that has among it
  
  How to get the ip address for your TV?  Samsung supports uPnP SSDP discovery.  This UDP protocol exists of two LAN broadcast messages:
  - A Discovery broadcast to all devices on the LAN
- - a Notify response broadcast from all uPnP devices. This response contains the host ip, short description, and a URL to the uPnP supported services (in XML, on port 8197)
-From the Notify response you can take ip address (and evdentually do a reverse DNS lookup for the hostname). 
+ - a Notify response broadcast from all uPnP devices. This response contains the host ip, short description, and a URL to the uPnP supported services (in XML, on port 8197/DMR)
+From the Notify response you can take ip address (and evdentually do a reverse DNS lookup for the hostname).
 
-A quick Wireshark trace showed however that Samsung does not respond to the Discovery request. Fortunately, they broadcast the Notify message when you power on the TV ('alive' Notify), and send a 'byebye' Notify when you power off. This means that for automatic configuration of the ip address, you will have to start the app before you power on the TV the first time. 
+This how the Notify looks like: 
+````
+    '$': 'NOTIFY * HTTP/1.1',
+    HOST: '239.255.255.250:1900',
+    'CACHE-CONTROL': 'max-age=1800',
+    DATE: 'gio, 14 nov 2024 15:46:42 GMT',
+    LOCATION: 'http://192.168.1.158:9197/dmr',
+    NT: 'upnp:rootdevice',
+    NTS: 'ssdp:alive',
+    SERVER: 'SHP, UPnP/1.0, Samsung UPnP SDK/1.0',
+    USN: 'uuid:bd50ada8-da36-49b2-9363-7fbe8a747b1d::upnp:rootdevice'
+````
+
+A quick Wireshark trace showed however that Samsung does not respond to the Discovery request. Fortunately, they broadcast the Notify message when you power on the TV ('alive' Notify), and send a 'byebye' Notify when you power off. The Notify message is also broadcast at regular intervals (every few minutes). This means that for automatic configuration of the ip address, you will have to start the app before you power on the TV the first time. 
 
 > **NOTE for Windows and WSL:** 
 > - Windows already runs its own SSDP Discovery service. This service 'drains' all the Notify messages and herefore you will never see the message in your own discovery service. To make it work on Windows, stop the SSDP Discovery from the Service manager (service.msc)
@@ -165,7 +178,6 @@ npm start
 [Index](#index)
  
 
-- clean up the code, it's dreadfull
 - Add automatic hostname discovery via uPnP SSDP discvery
 - beautify the GUI, you can see I am more a backend kind of guy
 - package executables for Windows/Linux/Mac once it is in acceptable state
