@@ -54,6 +54,7 @@ class WsWrapper {
         this.connected = true
         this.win.webContents.send('send-m2r-connstat', this.connected)
         this.win.webContents.send('send-m2r-name', this.name)
+        this.win.webContents.send('send-m2r-host', this.host)
       
         this.pingtimeout = setTimeout(() => {
           this.ws.terminate();
@@ -101,6 +102,12 @@ class WsWrapper {
         this.writeToken()
         this.connected = true
         this.deviceid = msg.data.id
+      }
+      if (msg.event === 'ms.channel.timeOut') {
+        // if device access consent is not given in time, this event comes
+        console.log("ms.channel.timeout event received,  closing connection")
+        this.ws.terminate()
+        
       }
     }
 

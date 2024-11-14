@@ -1,7 +1,8 @@
 const { app, BrowserWindow, Menu, ipcMain } = require('electron')
 const path = require('node:path')
-const WsWrapper = require('./wswrapper');
-let wsw
+const WsWrapper = require('./wswrapper')
+const SSDPDiscover = require('./ssdpdiscover')
+
 let win
 
 const myname = "Paul's Samsung TV RC"
@@ -32,8 +33,6 @@ const createWindow = () => {
     // ])
     // Menu.setApplicationMenu(menu)
     
-
-    //   win.loadFile('index.html')
   win.loadFile('index.html')
   .then(() => { win.show(); })
 
@@ -44,11 +43,20 @@ app.whenReady().then(() => {
 
   console.log("App ready, creating window")
   win = createWindow()
-  wsw = new WsWrapper(IP, PORT, myname, win)
+
+  // Websoket wrapper object, connect in 3s
+  let wsw = new WsWrapper(IP, PORT, myname, win)
   setTimeout(() => {wsw.connect()}, 3000)
 
+  // Start SSDP discovery to listen for Samsung tv and get the IP
+  // The ws connection starts ogff with default hostname and retries when failed. 
+  // The SSDP service sets the IP address when found.  
+  const ssdp = new SSDPDiscover(win, wsw)
+  ssdp.start()
+  
   // Add eventlistener for send-rc-key events sent from renderer
   ipcMain.on('send-r2m-key', wsw.sendKeyHandler.bind(wsw))
+
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
