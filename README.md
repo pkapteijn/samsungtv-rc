@@ -125,7 +125,7 @@ After some searching I found the NodeJS websocket library 'ws' that has among it
  
  How to get the ip address for your TV?  Samsung supports uPnP SSDP discovery.  This UDP protocol exists of two LAN broadcast messages:
  - A Discovery broadcast to all devices on the LAN
- - a Notify response broadcast from all uPnP devices. This response contains the host ip, short description, and a URL to the uPnP supported services (in XML, on port 8197/DMR)
+ - a Notify response broadcast from all uPnP devices. This response contains the host ip, short description, and a URL to the uPnP supported services (in XML, on port 9197/DMR)
 From the Notify response you can take ip address (and evdentually do a reverse DNS lookup for the hostname).
 
 This how the Notify looks like: 
@@ -161,6 +161,7 @@ Install the following npm pakages:
 npm install --save-dev electron
 npm install --save-dev path
 npm install --save-dev ws
+npm install --save-dev fs
 npm install --save-dev xml2js
 npm install --save-dev node-upnp-utils
 ````
