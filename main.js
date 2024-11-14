@@ -44,13 +44,11 @@ app.whenReady().then(() => {
 
   console.log("App ready, creating window")
   win = createWindow()
-  const contents = win.webContents
-  console.log(contents)
   wsw = new WsWrapper(IP, PORT, myname, win)
-  setTimeout(() => {wsw.connect()}, 5000)
+  setTimeout(() => {wsw.connect()}, 3000)
 
   // Add eventlistener for send-rc-key events sent from renderer
-  ipcMain.on('send-r2m-key', wsw.sendKeyHandler)
+  ipcMain.on('send-r2m-key', wsw.sendKeyHandler.bind(wsw))
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()

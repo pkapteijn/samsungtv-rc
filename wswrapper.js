@@ -36,6 +36,7 @@ class WsWrapper {
 
     writeToken() {
       try {
+        console.log("token write: ",  this.token)
           fs.writeFileSync('token.txt', this.token)
           return 
       }
@@ -50,10 +51,8 @@ class WsWrapper {
         // if ping received before timeout, timer is cleared to avoid connection to be terminated
         clearTimeout(this.pingtimeout);
         this.connected = true
-        this.win.webContents.on('did-finish-load', () => {
-          this.win.webContents.send('send-m2r-connstat', this.connected)
-          this.win.webContents.send('send-m2r-name', this.name)
-        })
+        this.win.webContents.send('send-m2r-connstat', this.connected)
+        this.win.webContents.send('send-m2r-name', this.name)
       
         this.pingtimeout = setTimeout(() => {
           this.ws.terminate();
@@ -65,17 +64,57 @@ class WsWrapper {
             origin: 'https://localhost:9000',
             rejectUnauthorized: false
           })
-        this.ws.on('open', this.heartbeat)
-        this.ws.on('ping', this.heartbeat)
-        this.ws.on('close', function clear() {
+        this.ws.on('open', this.heartbeat.bind(this))
+        this.ws.on('ping', this.heartbeat.bind(this))
+        this.ws.on('close', () => {
             clearTimeout(this.pingtimeout); 
             console.log("Connection to TV closed,  updating connection status");
             this.connected = false
-            this.win.webContents.on('did-finish-load', () => {
-              this.win.webContents.send('send-m2r-connstat', this.connected)
-            })
+        })
+        this.win.webContents.send('send-m2r-connstat', this.connected)
+        this.ws.on('message', this.messageHandler.bind(this))
+        this.ws.on('error', (event) => {
+            console.log(event);
           })
-        this.ws.on('message', function (event) {
+
+    }
+
+    messageHandler(event) {
+
+      let msg = JSON.parse(event)
+      console.log("Json event: ", JSON.stringify(msg))
+      // if no valid token was sent, the user has to confirm consent on TV. 
+      // A new token is then sent in a ms.channel.connect event that has the
+      // new token as data.token
+      if (( msg.event === 'ms.channel.connect') && 
+          (msg.data.hasOwnProperty('token'))) 
+      {
+        this.token = msg.data.clients[0].attributes.token
+        this.writeToken()
+        this.connected = true
+        this.deviceid = msg.data.id
+      }
+    }
+
+    sendKeyHandler(event, key) {
+      console.log("Received key from renderer: " + key)
+      console.log("keyhandler. this.conected: ", this.connected)
+      if (this.connected) {
+        this.ws.send(JSON.stringify({
+            "method": "ms.remote.control",
+            "params": {
+                "Cmd": "Click",
+                "DataOfCmd": key,
+                "Option": "false",
+                "TypeOfRemote": "SendRemoteKey"
+            }
+          }))
+        }
+    }
+}
+
+module.exports = WsWrapper
+
             // response msg after device consent confirmation
             //   {
             //     "data": {
@@ -96,35 +135,3 @@ class WsWrapper {
             //     },
             //     "event": "ms.channel.connect"
             // }
-            let msg = JSON.parse(event)
-            if ( msg.event === 'ms.channel.connect') {
-              this.token = msg.data.token
-              this.writeToken()
-              this.connected = true
-              this.deviceid = msg.data.id
-            }
-            console.log(event);
-          })
-          this.ws.on('error', function(event) {
-            console.log(event);
-          })
-
-    }
-
-    sendKeyHandler(event, key) {
-      console.log("Received key from renderer: " + key)
-      if (this.connected) {
-        this.ws.send(JSON.stringify({
-            "method": "ms.remote.control",
-            "params": {
-                "Cmd": "Click",
-                "DataOfCmd": key,
-                "Option": "false",
-                "TypeOfRemote": "SendRemoteKey"
-            }
-          }))
-        }
-    }
-}
-
-module.exports = WsWrapper
