@@ -26,6 +26,7 @@ class WsWrapper {
     readToken() {
       try {
           let token = fs.readFileSync('token.txt', 'utf-8')
+          console.log("token read: ",  token)
           return token
       }
       catch (err) {
@@ -66,18 +67,25 @@ class WsWrapper {
           })
         this.ws.on('open', this.heartbeat.bind(this))
         this.ws.on('ping', this.heartbeat.bind(this))
-        this.ws.on('close', () => {
-            clearTimeout(this.pingtimeout); 
-            console.log("Connection to TV closed,  updating connection status");
-            this.connected = false
-        })
-        this.win.webContents.send('send-m2r-connstat', this.connected)
+        this.ws.on('close', this.closeHandler.bind(this))
         this.ws.on('message', this.messageHandler.bind(this))
-        this.ws.on('error', (event) => {
-            console.log(event);
-          })
-
+        this.ws.on('error', this.errorHandler.bind(this))
     }
+
+    errorHandler(event) {
+      console.error("Error on websocket connection: ", event);
+    }
+
+    closeHandler() {
+      clearTimeout(this.pingtimeout); 
+      console.log("Connection to TV closed,  updating connection status");
+      this.connected = false
+      this.win.webContents.send('send-m2r-connstat', this.connected)
+      // Try reconnect in 5s
+      setTimeout(() => {
+        this.connect()
+      }, 5000);
+     }
 
     messageHandler(event) {
 
@@ -89,7 +97,7 @@ class WsWrapper {
       if (( msg.event === 'ms.channel.connect') && 
           (msg.data.hasOwnProperty('token'))) 
       {
-        this.token = msg.data.clients[0].attributes.token
+        this.token = msg.data.token
         this.writeToken()
         this.connected = true
         this.deviceid = msg.data.id
@@ -98,7 +106,6 @@ class WsWrapper {
 
     sendKeyHandler(event, key) {
       console.log("Received key from renderer: " + key)
-      console.log("keyhandler. this.conected: ", this.connected)
       if (this.connected) {
         this.ws.send(JSON.stringify({
             "method": "ms.remote.control",
@@ -110,28 +117,31 @@ class WsWrapper {
             }
           }))
         }
+        else {
+          console.error("Key press NOT sent to TV, no connection")
+        }
     }
 }
 
 module.exports = WsWrapper
 
-            // response msg after device consent confirmation
-            //   {
-            //     "data": {
-            //         "clients": [
-            //             {
-            //                 "attributes": {
-            //                     "name": "c2Ftc3VuZ3R2cmM=",
-            //                     "token": ""
-            //                 },
-            //                 "connectTime": 1731510156304,
-            //                 "deviceName": "c2Ftc3VuZ3R2cmM=",
-            //                 "id": "bfb0e8d0-7c17-43f7-9ec3-254e7de550a8",
-            //                 "isHost": false
-            //             }
-            //         ],
-            //         "id": "bfb0e8d0-7c17-43f7-9ec3-254e7de550a8",
-            //         "token": "42516532"
-            //     },
-            //     "event": "ms.channel.connect"
-            // }
+// response msg after device consent confirmation
+//   {
+//     "data": {
+//         "clients": [
+//             {
+//                 "attributes": {
+//                     "name": "c2Ftc3VuZ3R2cmM=",
+//                     "token": ""
+//                 },
+//                 "connectTime": 1731510156304,
+//                 "deviceName": "c2Ftc3VuZ3R2cmM=",
+//                 "id": "bfb0e8d0-7c17-43f7-9ec3-254e7de550a8",
+//                 "isHost": false
+//             }
+//         ],
+//         "id": "bfb0e8d0-7c17-43f7-9ec3-254e7de550a8",
+//         "token": "42516532"
+//     },
+//     "event": "ms.channel.connect"
+// }
