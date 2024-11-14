@@ -146,8 +146,10 @@ I used the current LTS version on NodeJS, which at the moment of writing is v22.
 Install the following npm pakages: 
 ````
 npm install --save-dev electron
-npm install --save path
-npm install --save ws
+npm install --save-dev path
+npm install --save-dev ws
+npm install --save-dev xml2js
+npm install --save-dev node-upnp-utils
 ````
 
 # Running
