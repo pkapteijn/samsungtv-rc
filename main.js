@@ -44,6 +44,7 @@ app.whenReady().then(() => {
   console.log("App ready, creating window")
   win = createWindow()
 
+
   // Start SSDP discovery to listen for Samsung tv and get the IP
   const ssdp = new SSDPDiscover(win)
   ssdp.start()
@@ -54,6 +55,7 @@ app.whenReady().then(() => {
 
   // Add eventlistener for send-rc-key events sent from renderer
   ipcMain.on('send-r2m-key', wsw.sendKeyHandler.bind(wsw))
+  win.webContents.send('send-m2r-name', myname)
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
