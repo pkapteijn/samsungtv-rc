@@ -10,7 +10,10 @@
 # samsungtv-rc
 [Index](#index)
  
-A Remote Control electron app for recent Samsung TVs
+A Remote Control electron app for recent Samsung TVs. 
+The current status shows like this: 
+
+![](./img/screenshot.jpg "Current status")
 
 # How it works
 [Index](#index)
