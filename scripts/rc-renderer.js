@@ -5,7 +5,7 @@ const status = {
 
 // We have fixed grid of 5 columns for buttons, NULL will leave the cell empty
 const KEYS1 = [
-    ["KEY_HOME", "NULL", "KEY_MENU", "KEY_POWER", "STATUS_CONNECTION"], 
+    ["KEY_HOME", "NULL", "KEY_MENU", "NULL", "KEY_POWER"], 
     ["NULL", "NULL", "NULL", "NULL", "NULL"], 
     ["NULL", "KEY_UP", "NULL", "NULL", "KEY_VOLUP"], 
     ["KEY_LEFT", "KEY_ENTER", "KEY_RIGHT", "NULL", "KEY_MUTE"], 
@@ -20,6 +20,8 @@ const KEYS2 = [
     ["NULL", "KEY_0", "NULL", "NULL", "KEY_GUIDE"], 
     ["KEY_GREEN", "KEY_RED", "KEY_YELLOW", "KEY_BLUE", "NULL"], 
 ]
+
+const KEYS3 = [["STATUS_CONNECTION"]]
 
 const colorMapClass  = {
     'GREEN':  "btn btn-success", 
@@ -42,7 +44,7 @@ function drawGrid(keygrid, containerId) {
 
         for (let col=0; col<numCols; col++) {
             const newCol = getColumn(col)
-            const newCell = getCell(+row, col)
+            const newCell = getCell(row, col)
             const newDiv = getDiv()
             const newButton = getButton(keygrid, row, col)
             newDiv.appendChild(newButton)
@@ -56,6 +58,16 @@ function drawGrid(keygrid, containerId) {
 
     }
 
+}
+
+function drawConnStat( id) {
+    const connstat = document.getElementById(id)
+    const newCell = getCell(0, 0)
+    const newDiv = getDiv()
+    const newButton = getButton(KEYS3, 0, 0)
+    newDiv.appendChild(newButton)
+    newCell.appendChild(newDiv)
+    connstat.appendChild(newCell)
 }
 
 function getEmptyColumn(colId) {
@@ -160,7 +172,7 @@ function getButton(keygrid, rowId, colId) {
             button.innerText = label
             button.key = keygrid[rowId][colId] // pass on arg in object for event
             button.addEventListener("click", powerHandler)
-        default: 
+            default: 
 
             break
         }
@@ -192,6 +204,11 @@ function setHost(host) {
     hostname.innerText = host
 }
 
+function setDevice(device) {
+    const devicename = document.getElementById("devicename")
+    devicename.innerText = device
+}
+
 function setConnectionStatus(connected) {
     const connstat = document.getElementById("status_connection")
     if (connected) {
@@ -219,6 +236,11 @@ function main() {
         setHost(host)
     })
 
+    window.electron.onUpdateDevice((device) => {
+        console.log("Received devicenamefrom main: " + device)
+        setDevice(device)
+    })
+
     window.electron.onUpdateConnStatus((status) => {
         console.log("Received connection status from main: " + status)
         setConnectionStatus(status)
@@ -226,6 +248,7 @@ function main() {
 
     drawGrid(KEYS1, "container-buttons-1")
     drawGrid(KEYS2, "container-buttons-2")
+    drawConnStat("col-connstat")
 
  
 }

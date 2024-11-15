@@ -5,7 +5,8 @@ class WsWrapper {
     constructor(host, port, name, win) {
         this.host = host || 'Samsung.lan'
         this.port = port || 8002
-        this.name = name || 'Samsung TV RC'
+        this.devicename = name || 'Samsung TV RC'
+        this.name = 'Samsung TV'
         this.win = win
         this.token = this.readToken()
         this.url = this.getUrl()
@@ -18,7 +19,7 @@ class WsWrapper {
     getUrl() {
         return "wss://" + this.host + ":" + this.port +
             "/api/v2/channels/samsung.remote.control?name=" +
-            btoa(this.name) +
+            btoa(this.devicename) +
             "&token=" +
             this.token
     }
@@ -55,6 +56,7 @@ class WsWrapper {
         this.win.webContents.send('send-m2r-connstat', this.connected)
         this.win.webContents.send('send-m2r-name', this.name)
         this.win.webContents.send('send-m2r-host', this.host)
+        this.win.webContents.send('send-m2r-device', this.devicename)
       
         this.pingtimeout = setTimeout(() => {
           this.ws.terminate();

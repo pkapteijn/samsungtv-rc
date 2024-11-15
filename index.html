@@ -31,9 +31,7 @@
                 <span class="visually-hidden">(current)</span>
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">About</a>
-            </li>
+
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true"
                 aria-expanded="false">Configure</a>
@@ -45,6 +43,9 @@
                 <a class="dropdown-item" href="#">Separated link</a>
               </div>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">About</a>
+            </li>
           </ul>
         </div>
       </div>
@@ -52,12 +53,12 @@
   </div>
 
 
-  <div class="container p-2 text-white border" id="container-title">
+  <div class="container p-2 text-white border border-primary" id="container-title">
 
     <div class="row p-2" id="row-1">
 
       <div class="col-lg-1" id="col-1">
-        <h2>TV: </h2>
+        <h2><b>TV: </b> </h2>
       </div>
       <div class="col-lg-11" id="col-2">
         <h2 id="title"></h2>
@@ -66,24 +67,36 @@
 
   </div>
 
-  <div class="container p-2 text-white border" id="container-buttons-1">
+  <div class="container p-2 text-white border border-primary" id="container-buttons-1">
 
   </div>
 
-  <div class="container p-2 text-white border" id="container-buttons-2">
+  <div class="container p-2 text-white border border-primary" id="container-buttons-2">
 
   </div>
 
-  <div class="container p-2 text-white border" id="container-foote">
+  <div class="container p-2 text-white border border-primary" id="container-foote">
     <div class="row p-2" id="row-1">
 
       <div class="col-lg-1" id="col-1">
-        Host:  
+        <b>TV IP: </b>
       </div>
-      <div class="col-lg-11" id="col-2">
-          <div id="hostname"></div>
-        </div>
+      <div class="col-lg-3" id="col-2">
+        <div id="hostname"></div>
+      </div>
+      <div class="col-lg-2" id="col-3">
+        <b>Device name: </b>
+      </div>
+      <div class="col-lg-2" id="col-4">
+        <div id="devicename"></div>
+      </div>
+      <div class="col-lg-2" id="col-5">
+        <div id="col-connstat">
 
+        </div>
+      </div>
+      <div class="col-lg-2" id="col-6">
+      </div>
     </div>
 
 </body>

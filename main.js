@@ -5,7 +5,7 @@ const SSDPDiscover = require('./ssdpdiscover')
 
 let win
 
-const myname = "Paul's Samsung TV RC"
+const devicename = process.env.NAME || process.env.COMPUTERNAME || "Paul's Samsung TV RC"
 const IP = "Samsung.lan"
 const PORT = 8002
 
@@ -13,7 +13,7 @@ const PORT = 8002
 
 const createWindow = () => {
     const win = new BrowserWindow({
-      width: 1000,
+      width: 900,
       height: 800, 
       webPreferences: {
         preload: path.join(__dirname, 'preload', 'rc-preload.js')
@@ -43,9 +43,9 @@ app.whenReady().then(() => {
 
   console.log("App ready, creating window")
   win = createWindow()
-
+console.log("devicename: " + devicename)
   // Websoket wrapper object, connect in 3s
-  let wsw = new WsWrapper(IP, PORT, myname, win)
+  let wsw = new WsWrapper(IP, PORT, devicename, win)
   setTimeout(() => {wsw.connect()}, 3000)
 
   // Start SSDP discovery to listen for Samsung tv and get the IP
