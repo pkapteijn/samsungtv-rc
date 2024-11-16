@@ -1,8 +1,3 @@
-const status = {
-    connected:  false, 
-    poweredon: false
-}
-
 // We have fixed grid of 5 columns for buttons, NULL will leave the cell empty
 const KEYS1 = [
     ["KEY_HOME", "NULL", "KEY_MENU", "NULL", "KEY_POWER"], 
@@ -33,15 +28,15 @@ const colorMapClass  = {
     'CONNECTION': "badge rounded-pill bg-danger badge-pill-close"
 }
 
+
 function drawGrid(keygrid, containerId) {
     const numRows = keygrid.length
     const cont = document.getElementById(containerId)
     for (let row=0; row<numRows; row++) {
         const numCols =  keygrid[row].length
         const newRow = getRow(row)
-        const emptyCol = getEmptyColumn("empty")
-        newRow.appendChild(emptyCol)
-
+        const emptyCol1 = getEmptyColumn("empty")
+        newRow.appendChild(emptyCol1)
         for (let col=0; col<numCols; col++) {
             const newCol = getColumn(col)
             const newCell = getCell(row, col)
@@ -53,7 +48,8 @@ function drawGrid(keygrid, containerId) {
             newRow.appendChild(newCol)
 
         }
-        newRow.appendChild(emptyCol)
+        const emptyCol7 = getEmptyColumn("empty")
+        newRow.appendChild(emptyCol7)
         cont.appendChild(newRow)
 
     }

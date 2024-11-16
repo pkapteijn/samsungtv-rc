@@ -32,17 +32,17 @@
               </a>
             </li>
 
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true"
-                aria-expanded="false">Configure</a>
-              <div class="dropdown-menu">
-                <a class="dropdown-item" href="#">Action</a>
-                <a class="dropdown-item" href="#">Another action</a>
-                <a class="dropdown-item" href="#">Something else here</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#">Separated link</a>
-              </div>
-            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Number key delay 
+                  <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu">
+                  <li><div id="0sec">None</div></li>
+                  <li><div id="3sec">3 Seconds</div></li>
+                  <li><div id="5sec">5 Seconds</div></li>
+                  <li><div id="10sec">10 Seconds</div></li>
+              </ul>
+          </li> 
             <li class="nav-item">
               <a class="nav-link" href="#">About</a>
             </li>
@@ -75,13 +75,13 @@
 
   </div>
 
-  <div class="container p-2 text-white border border-primary" id="container-foote">
+  <div class="container p-2 text-white border border-primary" id="container-footer">
     <div class="row p-2" id="row-1">
 
       <div class="col-lg-1" id="col-1">
         <b>TV IP: </b>
       </div>
-      <div class="col-lg-3" id="col-2">
+      <div class="col-lg-2" id="col-2">
         <div id="hostname"></div>
       </div>
       <div class="col-lg-2" id="col-3">
@@ -89,13 +89,15 @@
       </div>
       <div class="col-lg-2" id="col-4">
         <div id="devicename"></div>
-      </div>
-      <div class="col-lg-2" id="col-5">
+        </div>      
+        <div class="col-lg-2" id="col-5">
+          </div>
+      <div class="col-lg-2" id="col-6">
         <div id="col-connstat">
 
         </div>
       </div>
-      <div class="col-lg-2" id="col-6">
+      <div class="col-lg-1" id="col-7">
       </div>
     </div>
 
