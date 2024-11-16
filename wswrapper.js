@@ -18,6 +18,7 @@ class WsWrapper {
         this.deviceid = ""
         this.nrkeys = []
         this.nrkeyTimeout = 0
+        this.NRKEYINTERVAL = parseInt(process.env.RC_NRKEY_INTERVAL) || 0
     }
 
     getUrl() {
@@ -140,7 +141,7 @@ class WsWrapper {
               }))
             }
             this.nrkeys = []
-          }, 7000) // TODO: make interval a config item il, 0 for immediate sending
+          }, this.NRKEYINTERVAL) // TODO: make interval a config item il, 0 for immediate sending
         }
         else {
 
