@@ -5,6 +5,7 @@
  - [uPnP SSDP discovery](#upnp-ssdp-discovery)
  - [Installation](#installation)
  - [Running](#running)
+ - [Building](#building)
  - [TODO](#todo)
 
 # samsungtv-rc
@@ -176,6 +177,21 @@ npm start
 It will start off with default values for the host to use to connect ('Samsung.lan') and for the TV name that is displayed in the title bar. At the same time, the SSDP discovery sevice is started (Windows users:  remember to stop the Windows SSDP discovery service, or the discovery wont work). 
 As it can take a few minutes for the TV to broadcast the info, it may take some time for the right name an IP are displayed. 
 
+# Building
+[Index](#index)
+
+To build a distributable installer for your OS, run the following: 
+````
+npm install --save-dev @electron-forge/cli
+npx electron-forge import
+````
+To make the executable and an installer run this command: 
+````
+npm run make
+````
+You will find the output in the directory `out`. 
+
+
 > **NOTE for WSL:** 
 > - Electron is known to have some issues with WSL. You are likely to see some dbus errors. Generally, it works though, although it happened to me in a few occassions that the window froze ( and no way of killing it... ).  Be aware!
 
@@ -184,7 +200,6 @@ As it can take a few minutes for the TV to broadcast the info, it may take some 
  
 - fix the menubars
 - beautify the GUI, you can see I am more a backend kind of guy
-- package executables for Windows/Linux/Mac once it is in acceptable state
 
 
 
