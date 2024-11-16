@@ -1,11 +1,14 @@
 const fs = require('node:fs')
 const ws = require('ws')
 
+const NRKEYS = ["KEY_1", "KEY_2", "KEY_3", "KEY_4", "KEY_5", "KEY_6", "KEY_7", "KEY_8", "KEY_9", "KEY_0"]
+
 class WsWrapper {
     constructor(host, port, name, win) {
         this.host = host || 'Samsung.lan'
         this.port = port || 8002
-        this.name = name || 'Samsung TV RC'
+        this.devicename = name || 'Samsung TV RC'
+        this.name = 'Samsung TV'
         this.win = win
         this.token = this.readToken()
         this.url = this.getUrl()
@@ -13,12 +16,15 @@ class WsWrapper {
         this.connected = false
         this.pingtimeout  = undefined
         this.deviceid = ""
+        this.nrkeys = []
+        this.nrkeyTimeout = 0
+        this.NRKEYINTERVAL = parseInt(process.env.RC_NRKEY_INTERVAL) || 0
     }
 
     getUrl() {
         return "wss://" + this.host + ":" + this.port +
             "/api/v2/channels/samsung.remote.control?name=" +
-            btoa(this.name) +
+            btoa(this.devicename) +
             "&token=" +
             this.token
     }
@@ -55,7 +61,7 @@ class WsWrapper {
         this.win.webContents.send('send-m2r-connstat', this.connected)
         this.win.webContents.send('send-m2r-name', this.name)
         this.win.webContents.send('send-m2r-host', this.host)
-      
+        this.win.webContents.send('send-m2r-device', this.devicename)
         this.pingtimeout = setTimeout(() => {
           this.ws.terminate();
         }, 30000 + 1000);
@@ -113,21 +119,48 @@ class WsWrapper {
 
     sendKeyHandler(event, key) {
       console.log("Received key from renderer: " + key)
+
       if (this.connected) {
-        this.ws.send(JSON.stringify({
-            "method": "ms.remote.control",
-            "params": {
-                "Cmd": "Click",
-                "DataOfCmd": key,
-                "Option": "false",
-                "TypeOfRemote": "SendRemoteKey"
+
+        if (NRKEYS.includes(key)) {
+          // Allow for multiple number key prsses with interval between them max.  x seconds
+          // when you are not quick enough wrt to allowed interval on TV 
+          this.nrkeys.push(key)
+          clearTimeout(this.nrkeyTimeout)
+          this.nrkeyTimeout = setTimeout(() => {
+            for(let i=0; i<this.nrkeys. length; i++) {
+              console.log("Sending number key: ", this.nrkeys[i])
+              this.ws.send(JSON.stringify({
+                "method": "ms.remote.control",
+                "params": {
+                    "Cmd": "Click",
+                    "DataOfCmd": this.nrkeys[i],
+                    "Option": "false",
+                    "TypeOfRemote": "SendRemoteKey"
+                }
+              }))
             }
-          }))
+            this.nrkeys = []
+          }, this.NRKEYINTERVAL) // TODO: make interval a config item il, 0 for immediate sending
         }
         else {
-          console.error("Key press NOT sent to TV, no connection")
+
+            this.ws.send(JSON.stringify({
+                "method": "ms.remote.control",
+                "params": {
+                    "Cmd": "Click",
+                    "DataOfCmd": key,
+                    "Option": "false",
+                    "TypeOfRemote": "SendRemoteKey"
+                }
+              }))
+          }
         }
-    }
+        else {
+          console.error("Key NOT sent to TV, disconnected")
+        }
+     }
+     
 }
 
 module.exports = WsWrapper
