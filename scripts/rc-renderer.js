@@ -1,34 +1,3 @@
-// We have fixed grid of 5 columns for buttons, NULL will leave the cell empty
-const KEYS1 = [
-    ["KEY_HOME", "NULL", "KEY_MENU", "NULL", "KEY_POWER"], 
-    ["NULL", "NULL", "NULL", "NULL", "NULL"], 
-    ["NULL", "KEY_UP", "NULL", "NULL", "KEY_VOLUP"], 
-    ["KEY_LEFT", "KEY_ENTER", "KEY_RIGHT", "NULL", "KEY_MUTE"], 
-    ["NULL", "KEY_DOWN", "NULL", "NULL", "KEY_VOLDOWN"], 
-    ["KEY_RETURN", "NULL", "KEY_PLAY_BACK", "NULL", "NULL"], 
-]
-
-const KEYS2 = [
-    ["KEY_1", "KEY_2", "KEY_3", "NULL", "KEY_CHUP"], 
-    ["KEY_4", "KEY_5", "KEY_6", "NULL", "KEY_INFO"], 
-    ["KEY_7", "KEY_8", "KEY_9", "NULL", "KEY_CHDOWN"], 
-    ["NULL", "KEY_0", "NULL", "NULL", "KEY_GUIDE"], 
-    ["KEY_GREEN", "KEY_RED", "KEY_YELLOW", "KEY_BLUE", "NULL"], 
-]
-
-const KEYS3 = [["STATUS_CONNECTION"]]
-
-const colorMapClass  = {
-    'GREEN':  "btn btn-success", 
-    'RED': "btn btn-danger", 
-    'YELLOW': "btn btn-warning", 
-    'BLUE': "btn btn-info", 
-    'DEFAULT': "btn btn-primary", 
-    'POWER': "btn btn-danger", 
-    'CONNECTION': "badge rounded-pill bg-danger badge-pill-close"
-}
-
-
 function drawGrid(keygrid, containerId) {
     const numRows = keygrid.length
     const cont = document.getElementById(containerId)
@@ -149,7 +118,7 @@ function getButton(keygrid, rowId, colId) {
 
             button = document.createElement("button")
             button.setAttribute("class", getButtonClass(prefix, label))
-            button.innerText = label
+            button.innerHTML = KEYLABELS[keygrid[rowId][colId]]
             button.key = keygrid[rowId][colId] // pass on arg in object for event
             button.addEventListener("click", keyPressHandler)
             break
@@ -165,7 +134,7 @@ function getButton(keygrid, rowId, colId) {
             label = keygrid[rowId][colId].split("_")[1]
             button = document.createElement("button")
             button.setAttribute("class", getButtonClass(prefix, label))
-            button.innerText = label
+            button.innerHTML =  KEYLABELS[keygrid[rowId][colId]]
             button.key = keygrid[rowId][colId] // pass on arg in object for event
             button.addEventListener("click", powerHandler)
             default: 

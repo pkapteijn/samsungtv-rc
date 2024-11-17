@@ -54,7 +54,6 @@ class WsWrapper {
     }
 
     heartbeat() {
-        console.log("ping received, updating connection status")
         // if ping received before timeout, timer is cleared to avoid connection to be terminated
         clearTimeout(this.pingtimeout);
         this.connected = true
