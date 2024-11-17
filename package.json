@@ -4,8 +4,10 @@
   "description": "A remote control app for Samsung TVs",
   "main": "index.js",
   "scripts": {
-    "start": "electron main.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "electron-forge start",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
   },
   "keywords": [
     "samsung",
@@ -16,7 +18,23 @@
   "author": "Paul Kapteijn",
   "license": "ISC",
   "devDependencies": {
+    "@electron-forge/cli": "^7.5.0",
+    "@electron-forge/maker-deb": "^7.5.0",
+    "@electron-forge/maker-rpm": "^7.5.0",
+    "@electron-forge/maker-squirrel": "^7.5.0",
+    "@electron-forge/maker-zip": "^7.5.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.5.0",
+    "@electron-forge/plugin-fuses": "^7.5.0",
+    "@electron/fuses": "^1.8.0",
     "electron": "^33.2.0",
+    "fs": "^0.0.1-security",
+    "node-upnp-utils": "^1.0.3",
+    "path": "^0.12.7",
+    "ws": "^8.18.0",
+    "xml2js": "^0.6.2"
+  },
+  "dependencies": {
+    "electron-squirrel-startup": "^1.0.1",
     "fs": "^0.0.1-security",
     "node-upnp-utils": "^1.0.3",
     "path": "^0.12.7",
