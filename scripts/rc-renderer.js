@@ -196,6 +196,31 @@ function getButton(keygrid, rowId, colId) {
     return button
 }
 
+function getAlert() {
+    let div = document.createElement('div')
+    div.setAttribute('class', "alert alert-warning alert-dismissible")
+    let button = document.createElement('button')
+    button.setAttribute("class", "btn-close")
+    button.setAttribute("data-bs-dismiss", "alert")
+    let strong = document.createElement("strong")
+    strong.innerText = "Warning! "
+    div.appendChild(button)
+    div.appendChild(strong)
+    div.append("Connection to TV lost, trying to reconnect.")
+
+    return div
+}
+
+function clearNode(node) {
+    // Remove all children
+    while (node.firstChild) {
+        node.removeChild(node.firstChild);
+    }
+    
+    // Clear inner text
+    node.innerText = '';
+}
+
 function keyPressHandler(event) {
     let key = (event && event.currentTarget) ? event.currentTarget.key : "NULL";
     console.log("key pressed: " + key)
@@ -228,9 +253,12 @@ function setConnectionStatus(connected) {
     const connstat = document.getElementById("status_connection")
     if (connected) {
         connstat.setAttribute("class", "badge rounded-pill bg-success badge-pill-close")
+        clearNode(document.getElementById('alert-div'))
     }
     else {
-        connstat.setAttribute("class", "badge rounded-pill bg-danger badge-pill-close") 
+        connstat.setAttribute("class", "badge rounded-pill bg-danger badge-pill-close")
+        let alert = document.getElementById('alert-div') 
+        alert.appendChild(getAlert())
     }
         
 }
