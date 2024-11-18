@@ -1,4 +1,5 @@
 const { app, BrowserWindow, Menu, ipcMain } = require('electron')
+const template = require('./menu')
 const path = require('node:path')
 const WsWrapper = require('./wswrapper')
 const SSDPDiscover = require('./ssdpdiscover')
@@ -13,25 +14,15 @@ const PORT = 8002
 
 const createWindow = () => {
     const win = new BrowserWindow({
-      width: 900,
+      width: 1000,
       height: 800, 
       webPreferences: {
         preload: path.join(__dirname, 'preload', 'rc-preload.js')
       }
     })
   
-    // const menu = Menu.buildFromTemplate([
-    //   {
-    //     label: app.name,
-    //     submenu: [
-    //       {
-    //         click: () => win.webContents.send('send-m2r-name', myname),
-    //         label: 'Update name'
-    //       }
-    //     ]
-    //   }
-    // ])
-    // Menu.setApplicationMenu(menu)
+    const menu = Menu.buildFromTemplate(template)
+    Menu.setApplicationMenu(menu)
     
   win.loadFile('index.html')
   .then(() => { win.show(); })
@@ -43,7 +34,7 @@ app.whenReady().then(() => {
 
   console.log("App ready, creating window")
   win = createWindow()
-console.log("devicename: " + devicename)
+
   // Websoket wrapper object, connect in 3s
   let wsw = new WsWrapper(IP, PORT, devicename, win)
   setTimeout(() => {wsw.connect()}, 3000)

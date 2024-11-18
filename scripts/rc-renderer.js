@@ -1,33 +1,52 @@
-// We have fixed grid of 5 columns for buttons, NULL will leave the cell empty
-const KEYS1 = [
-    ["KEY_HOME", "NULL", "KEY_MENU", "NULL", "KEY_POWER"], 
-    ["NULL", "NULL", "NULL", "NULL", "NULL"], 
-    ["NULL", "KEY_UP", "NULL", "NULL", "KEY_VOLUP"], 
-    ["KEY_LEFT", "KEY_ENTER", "KEY_RIGHT", "NULL", "KEY_MUTE"], 
-    ["NULL", "KEY_DOWN", "NULL", "NULL", "KEY_VOLDOWN"], 
-    ["KEY_RETURN", "NULL", "KEY_PLAY_BACK", "NULL", "NULL"], 
-]
-
-const KEYS2 = [
-    ["KEY_1", "KEY_2", "KEY_3", "NULL", "KEY_CHUP"], 
-    ["KEY_4", "KEY_5", "KEY_6", "NULL", "KEY_INFO"], 
-    ["KEY_7", "KEY_8", "KEY_9", "NULL", "KEY_CHDOWN"], 
-    ["NULL", "KEY_0", "NULL", "NULL", "KEY_GUIDE"], 
-    ["KEY_GREEN", "KEY_RED", "KEY_YELLOW", "KEY_BLUE", "NULL"], 
-]
-
-const KEYS3 = [["STATUS_CONNECTION"]]
-
-const colorMapClass  = {
-    'GREEN':  "btn btn-success", 
-    'RED': "btn btn-danger", 
-    'YELLOW': "btn btn-warning", 
-    'BLUE': "btn btn-info", 
-    'DEFAULT': "btn btn-primary", 
-    'POWER': "btn btn-danger", 
-    'CONNECTION': "badge rounded-pill bg-danger badge-pill-close"
+const initState = {
+    title:  "", 
+    devicename: "", 
+    hostname: "", 
+    connected: false
 }
 
+class State {
+    constructor(state) {
+        this.state = {} 
+        for (let key in state) { 
+            this.state[key] = {}
+            this.state[key].value = state[key]
+            this.state[key].hooks = []
+        }
+    } 
+    
+    set(event){ 
+        for (let key in event) { 
+            if (this.state.hasOwnProperty(key)) {
+                if (this.state[key].value  !== event[key]) {
+                    // state change: set new state, execute hook functions
+                    this.state[key].value = event[key]
+                    for(let fn of this.state[key].hooks) {
+                        fn(event[key])
+                    }
+                }
+                // else do nothing
+            }
+            else {
+                this.state[key] = {}
+                this.state[key].value = event[key]
+                this.state[key].hooks = []
+            }
+        }
+    }
+
+    addHook(key, fn) {
+        if (this.state.hasOwnProperty(key)) {
+            this.state[key].hooks.push(fn) 
+        }
+        else {
+            this.state[key] = {}
+            this.state[key].value = undefined
+            this.state[key].hooks = []
+            this.state[key].hooks.push(fn)
+        }
+    }
+}
 
 function drawGrid(keygrid, containerId) {
     const numRows = keygrid.length
@@ -149,7 +168,7 @@ function getButton(keygrid, rowId, colId) {
 
             button = document.createElement("button")
             button.setAttribute("class", getButtonClass(prefix, label))
-            button.innerText = label
+            button.innerHTML = KEYLABELS[keygrid[rowId][colId]]
             button.key = keygrid[rowId][colId] // pass on arg in object for event
             button.addEventListener("click", keyPressHandler)
             break
@@ -165,7 +184,7 @@ function getButton(keygrid, rowId, colId) {
             label = keygrid[rowId][colId].split("_")[1]
             button = document.createElement("button")
             button.setAttribute("class", getButtonClass(prefix, label))
-            button.innerText = label
+            button.innerHTML =  KEYLABELS[keygrid[rowId][colId]]
             button.key = keygrid[rowId][colId] // pass on arg in object for event
             button.addEventListener("click", powerHandler)
             default: 
@@ -175,6 +194,31 @@ function getButton(keygrid, rowId, colId) {
 
     button.setAttribute("id", keygrid[rowId][colId].toLowerCase())
     return button
+}
+
+function getAlert() {
+    let div = document.createElement('div')
+    div.setAttribute('class', "alert alert-warning alert-dismissible")
+    let button = document.createElement('button')
+    button.setAttribute("class", "btn-close")
+    button.setAttribute("data-bs-dismiss", "alert")
+    let strong = document.createElement("strong")
+    strong.innerText = "Warning! "
+    div.appendChild(button)
+    div.appendChild(strong)
+    div.append("Connection to TV lost, trying to reconnect.")
+
+    return div
+}
+
+function clearNode(node) {
+    // Remove all children
+    while (node.firstChild) {
+        node.removeChild(node.firstChild);
+    }
+    
+    // Clear inner text
+    node.innerText = '';
 }
 
 function keyPressHandler(event) {
@@ -209,9 +253,12 @@ function setConnectionStatus(connected) {
     const connstat = document.getElementById("status_connection")
     if (connected) {
         connstat.setAttribute("class", "badge rounded-pill bg-success badge-pill-close")
+        clearNode(document.getElementById('alert-div'))
     }
     else {
-        connstat.setAttribute("class", "badge rounded-pill bg-danger badge-pill-close") 
+        connstat.setAttribute("class", "badge rounded-pill bg-danger badge-pill-close")
+        let alert = document.getElementById('alert-div') 
+        alert.appendChild(getAlert())
     }
         
 }
@@ -222,25 +269,18 @@ window.addEventListener('load', main)
 
 function main() {
 
-    window.electron.onUpdateName((name) => {
-        console.log("Received name from main: " + name)
-        setTitle(name)
+    let state = new State(initState)
+    state.addHook('title', setTitle)
+    state.addHook('devicename', setDevice)
+    state.addHook('hostname', setHost)
+    state.addHook('connected', setConnectionStatus)
+
+
+    window.electron.onUpdateState((stateObj) => {
+        console.log("Received 'state from main: ", stateObj)
+        state.set(stateObj)
     })
 
-    window.electron.onUpdateHost((host) => {
-        console.log("Received hostname from main: " + host)
-        setHost(host)
-    })
-
-    window.electron.onUpdateDevice((device) => {
-        console.log("Received devicenamefrom main: " + device)
-        setDevice(device)
-    })
-
-    window.electron.onUpdateConnStatus((status) => {
-        console.log("Received connection status from main: " + status)
-        setConnectionStatus(status)
-    })
 
     drawGrid(KEYS1, "container-buttons-1")
     drawGrid(KEYS2, "container-buttons-2")

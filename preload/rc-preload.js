@@ -3,8 +3,5 @@ const { ipcRenderer, contextBridge } = require('electron');
 
 contextBridge.exposeInMainWorld('electron', {
     sendKey: (key) => ipcRenderer.send('send-r2m-key', key), 
-    onUpdateName: (callback) => ipcRenderer.on('send-m2r-name', (_event, value) => callback(value)), 
-    onUpdateHost: (callback) => ipcRenderer.on('send-m2r-host', (_event, value) => callback(value)), 
-    onUpdateDevice: (callback) => ipcRenderer.on('send-m2r-device', (_event, value) => callback(value)), 
-    onUpdateConnStatus: (callback) => ipcRenderer.on('send-m2r-connstat', (_event, value) => callback(value)), 
+    onUpdateState: (callback) => ipcRenderer.on('send-m2r-state', (_event, value) => callback(value)), 
 });
