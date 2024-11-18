@@ -57,10 +57,12 @@ class WsWrapper {
         // if ping received before timeout, timer is cleared to avoid connection to be terminated
         clearTimeout(this.pingtimeout);
         this.connected = true
-        this.win.webContents.send('send-m2r-connstat', this.connected)
-        this.win.webContents.send('send-m2r-name', this.name)
-        this.win.webContents.send('send-m2r-host', this.host)
-        this.win.webContents.send('send-m2r-device', this.devicename)
+        this.win.webContents.send('send-m2r-state', { 
+          devicename: this.devicename, 
+          hostname: this.host, 
+          title: this.name, 
+          connected: this.connected
+        })
         this.pingtimeout = setTimeout(() => {
           this.ws.terminate();
         }, 30000 + 1000);
@@ -86,7 +88,7 @@ class WsWrapper {
       clearTimeout(this.pingtimeout); 
       console.log("Connection to TV closed,  updating connection status");
       this.connected = false
-      this.win.webContents.send('send-m2r-connstat', this.connected)
+      this.win.webContents.send('send-m2r-state', {connected: this.connected})
       // Try reconnect in 5s
       setTimeout(() => {
         this.connect()

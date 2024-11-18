@@ -1,3 +1,53 @@
+const initState = {
+    title:  "", 
+    devicename: "", 
+    hostname: "", 
+    connected: false
+}
+
+class State {
+    constructor(state) {
+        this.state = {} 
+        for (let key in state) { 
+            this.state[key] = {}
+            this.state[key].value = state[key]
+            this.state[key].hooks = []
+        }
+    } 
+    
+    set(event){ 
+        for (let key in event) { 
+            if (this.state.hasOwnProperty(key)) {
+                if (this.state[key].value  !== event[key]) {
+                    // state change: set new state, execute hook functions
+                    this.state[key].value = event[key]
+                    for(let fn of this.state[key].hooks) {
+                        fn(event[key])
+                    }
+                }
+                // else do nothing
+            }
+            else {
+                this.state[key] = {}
+                this.state[key].value = event[key]
+                this.state[key].hooks = []
+            }
+        }
+    }
+
+    addHook(key, fn) {
+        if (this.state.hasOwnProperty(key)) {
+            this.state[key].hooks.push(fn) 
+        }
+        else {
+            this.state[key] = {}
+            this.state[key].value = undefined
+            this.state[key].hooks = []
+            this.state[key].hooks.push(fn)
+        }
+    }
+}
+
 function drawGrid(keygrid, containerId) {
     const numRows = keygrid.length
     const cont = document.getElementById(containerId)
@@ -191,25 +241,18 @@ window.addEventListener('load', main)
 
 function main() {
 
-    window.electron.onUpdateName((name) => {
-        console.log("Received name from main: " + name)
-        setTitle(name)
+    let state = new State(initState)
+    state.addHook('title', setTitle)
+    state.addHook('devicename', setDevice)
+    state.addHook('hostname', setHost)
+    state.addHook('connected', setConnectionStatus)
+
+
+    window.electron.onUpdateState((stateObj) => {
+        console.log("Received 'state from main: ", stateObj)
+        state.set(stateObj)
     })
 
-    window.electron.onUpdateHost((host) => {
-        console.log("Received hostname from main: " + host)
-        setHost(host)
-    })
-
-    window.electron.onUpdateDevice((device) => {
-        console.log("Received devicenamefrom main: " + device)
-        setDevice(device)
-    })
-
-    window.electron.onUpdateConnStatus((status) => {
-        console.log("Received connection status from main: " + status)
-        setConnectionStatus(status)
-    })
 
     drawGrid(KEYS1, "container-buttons-1")
     drawGrid(KEYS2, "container-buttons-2")

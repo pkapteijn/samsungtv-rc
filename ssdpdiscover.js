@@ -36,8 +36,9 @@ class SSDPDiscover {
                 this.name = name
                 this.wsw.name = this.name
                 this.wsw.host = this.host
-                this.win.webContents.send('send-m2r-name', this.name)
-                this.win.webContents.send('send-m2r-host', this.host)
+                this.win.webContents.send('send-m2r-state', {hostname: this.host, 
+                    title: this.name
+                })
         }
 
     }
